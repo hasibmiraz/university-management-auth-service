@@ -1,17 +1,19 @@
+/* eslint-disable no-console */
 import mongoose from 'mongoose';
-import config from './config';
 import { app } from './app';
+import config from './config';
+import { errorLogger, logger } from './shared/logger';
 
 async function main() {
   try {
     await mongoose.connect(config.database_url as string);
 
     app.listen(config.port, () =>
-      console.log(`App listening to port ${config.port}`)
+      logger.info(`App listening to port ${config.port}`)
     );
-    console.log(`DB connected successfully`);
+    logger.info(`DB connected successfully`);
   } catch (err: unknown) {
-    console.log(`Failed to connect to db: ${err}`);
+    errorLogger.error(`Failed to connect to db: ${err}`);
   }
 }
 
