@@ -1,5 +1,6 @@
-import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
+import 'dotenv/config';
+import express, { Application, Request, Response } from 'express';
 import userRouter from './app/modules/Users/user.route';
 
 export const app: Application = express();
