@@ -1,6 +1,7 @@
 import cors from 'cors';
 import 'dotenv/config';
-import express, { Application, Request, Response } from 'express';
+import express, { Application } from 'express';
+import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import userRouter from './app/modules/Users/user.route';
 
 export const app: Application = express();
@@ -12,6 +13,4 @@ app.use(express.urlencoded({ extended: true }));
 // Application routes
 app.use('/api/v1/user', userRouter);
 
-app.get('/', async (req: Request, res: Response) => {
-  res.send('success');
-});
+app.use(globalErrorHandler);
