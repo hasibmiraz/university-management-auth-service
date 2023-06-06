@@ -15,4 +15,4 @@ export const createUser: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default createUser;
+export const UserController = { createUser };
