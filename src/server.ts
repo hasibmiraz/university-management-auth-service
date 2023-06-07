@@ -10,8 +10,8 @@ process.on('uncaughtException', () => {
   process.exit(1);
 });
 
+let server: Server;
 async function main() {
-  let server: Server;
   try {
     await mongoose.connect(config.database_url as string);
 
@@ -36,3 +36,10 @@ async function main() {
 }
 
 main();
+
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM is received');
+  if (server) {
+    server.close();
+  }
+});
