@@ -1,12 +1,11 @@
-/* eslint-disable no-console */
 import { Server } from 'http';
 import mongoose from 'mongoose';
 import { app } from './app';
 import config from './config';
 import { errorLogger, logger } from './shared/logger';
 
-process.on('uncaughtException', () => {
-  console.log(`Uncaught exception detected. Closing the server...`);
+process.on('uncaughtException', error => {
+  errorLogger.error(error);
   process.exit(1);
 });
 
@@ -24,7 +23,7 @@ async function main() {
   }
 
   process.on('unhandledRejection', error => {
-    console.log(`Unhandled rejection. Closing the server...`);
+    errorLogger.error(error);
     if (server) {
       server.close(() => {
         errorLogger.error(error);
