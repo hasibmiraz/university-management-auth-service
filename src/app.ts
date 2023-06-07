@@ -2,7 +2,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import express, { Application } from 'express';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
-import { UserRoutes } from './app/modules/Users/user.route';
+import { UserRoutes } from './app/modules/User/user.route';
 
 export const app: Application = express();
 

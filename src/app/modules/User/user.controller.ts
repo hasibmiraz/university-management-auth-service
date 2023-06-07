@@ -10,8 +10,8 @@ export const createUser: RequestHandler = async (req, res, next) => {
       message: 'User created successfully',
       data: result,
     });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
