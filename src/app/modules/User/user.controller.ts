@@ -1,5 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
+import status from 'http-status';
 import catchAsync from '../../../shared/catchAsync';
+import sendResponse from '../../../shared/sendResponse';
+import { IUser } from './user.interface';
 import { UserService } from './user.service';
 
 export const createUser = catchAsync(
@@ -8,7 +11,9 @@ export const createUser = catchAsync(
     const result = await UserService.createUserToDB(user);
 
     next();
-    res.status(200).json({
+
+    sendResponse<IUser>(res, {
+      statusCode: status.OK,
       success: true,
       message: 'User created successfully',
       data: result,
