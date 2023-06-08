@@ -10,14 +10,14 @@ export const createUser = catchAsync(
     const { ...user } = req.body;
     const result = await UserService.createUserToDB(user);
 
-    next();
-
     sendResponse<IUser>(res, {
       statusCode: status.OK,
       success: true,
       message: 'User created successfully',
       data: result,
     });
+
+    next();
   }
 );
 
