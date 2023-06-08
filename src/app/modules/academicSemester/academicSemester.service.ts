@@ -1,4 +1,5 @@
 import status from 'http-status';
+import { SortOrder } from 'mongoose';
 import ApiError from '../../../errors/ApiErrors';
 import { PaginationHelper } from '../../../helper/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
@@ -20,11 +21,19 @@ const createSemester = async (
 const getAllSemesters = async (
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<IAcademicSemester[]>> => {
-  const { page, limit, skip } =
+  const { page, limit, skip, sortBy, sortOrder } =
     PaginationHelper.calculatePagination(paginationOptions);
 
+  const sortCondition: {
+    [key: string]: SortOrder;
+  } = {};
+
+  if (sortBy && sortOrder) {
+    sortCondition[sortBy] = sortOrder;
+  }
+
   const result = await AcademicSemester.find({}, { __v: 0 })
-    .sort()
+    .sort(sortCondition)
     .skip(skip)
     .limit(limit);
 
