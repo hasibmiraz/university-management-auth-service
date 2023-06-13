@@ -113,7 +113,7 @@ export const studentSchema = new Schema<IStudent, StudentModel>(
     },
     profileImage: {
       type: String,
-      required: true,
+      // required: true,
     },
     academicFaculty: {
       type: Schema.Types.ObjectId,
