@@ -1,17 +1,27 @@
 import config from '../../../config';
 import ApiError from '../../../errors/ApiErrors';
+import { AcademicSemester } from '../academicSemester/academicSemester.model';
+import { IStudent } from '../student/student.interface';
 import { IUser } from './user.interface';
 import { User } from './user.model';
-import { generateUserId } from './user.utils';
+import { generateStudentId } from './user.utils';
 
-const createUserToDB = async (user: IUser): Promise<IUser | null> => {
-  // need auto generated incremental Id
-  const id = await generateUserId();
-  user.id = id;
-  // default password
+const createStudent = async (
+  student: IStudent,
+  user: IUser
+): Promise<IUser | null> => {
   if (!user.password) {
-    user.password = config.default_user_password as string;
+    user.password = config.default_student_password as string;
   }
+
+  user.role = 'student';
+
+  const academicSemester = await AcademicSemester.findById(
+    student.academicSemester
+  );
+
+  const id = await generateStudentId(academicSemester);
+  user.id = id;
 
   const createdUser = await User.create(user);
 
@@ -23,5 +33,5 @@ const createUserToDB = async (user: IUser): Promise<IUser | null> => {
 };
 
 export const UserService = {
-  createUserToDB,
+  createStudent,
 };
