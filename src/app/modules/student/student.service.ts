@@ -47,11 +47,14 @@ const getAllStudents = async (
   const whereCondition = andCondition.length > 0 ? { $and: andCondition } : {};
 
   const result = await Student.find(whereCondition, { __v: 0 })
+    .populate('academicSemester')
+    .populate('academicDepartment')
+    .populate('academicFaculty')
     .sort(sortCondition)
     .skip(skip)
     .limit(limit);
 
-  const total = await Student.countDocuments();
+  const total = await Student.countDocuments(whereCondition);
 
   return {
     meta: { page, limit, total },
@@ -60,7 +63,10 @@ const getAllStudents = async (
 };
 
 const getSingleStudent = async (id: string): Promise<IStudent | null> => {
-  const result = await Student.findById(id);
+  const result = await Student.findById(id)
+    .populate('academicSemester')
+    .populate('academicDepartment')
+    .populate('academicFaculty');
   return result;
 };
 
@@ -75,7 +81,10 @@ const updateStudent = async (
 };
 
 const deleteStudent = async (id: string): Promise<IStudent | null> => {
-  const result = await Student.findByIdAndDelete(id, { __v: 0 });
+  const result = await Student.findByIdAndDelete(id, { __v: 0 })
+    .populate('academicSemester')
+    .populate('academicDepartment')
+    .populate('academicFaculty');
   return result;
 };
 
