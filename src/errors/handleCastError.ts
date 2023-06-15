@@ -1,9 +1,9 @@
 import { CastError } from 'mongoose';
-import { GenericErrorResponse } from '../interfaces/common';
-import { GenericErrorMessage } from '../interfaces/error';
+import { IGenericErrorResponse } from '../interfaces/common';
+import { IGenericErrorMessage } from '../interfaces/error';
 
-const handleCastError = (error: CastError): GenericErrorResponse => {
-  const errors: GenericErrorMessage[] = [
+const handleCastError = (error: CastError): IGenericErrorResponse => {
+  const errors: IGenericErrorMessage[] = [
     {
       path: error.path,
       message: 'Invalid id.',
