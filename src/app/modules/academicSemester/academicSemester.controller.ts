@@ -22,23 +22,25 @@ const createSemester = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getAllSemester = catchAsync(async (req: Request, res: Response) => {
-  const paginationOptions = pick(req.query, paginationFields);
-  const filters = pick(req.query, academicSemesterFilterableFields);
+const getAllSemester = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
+    const filters = pick(req.query, academicSemesterFilterableFields);
+    const paginationOptions = pick(req.query, paginationFields);
 
-  const result = await AcademicSemesterService.getAllSemesters(
-    filters,
-    paginationOptions
-  );
+    const result = await AcademicSemesterService.getAllSemesters(
+      filters,
+      paginationOptions
+    );
 
-  sendResponse<IAcademicSemester[]>(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Semester retrieved successfully.',
-    meta: result.meta,
-    data: result.data,
-  });
-});
+    sendResponse<IAcademicSemester[]>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Semester retrieved successfully.',
+      meta: result.meta,
+      data: result.data,
+    });
+  }
+);
 
 const getSingleSemester = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
