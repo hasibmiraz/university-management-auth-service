@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import status from 'http-status';
+import httpStatus from 'http-status';
 import { paginationFields } from '../../../constants/pagination';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
@@ -15,7 +15,7 @@ const createSemester = catchAsync(async (req: Request, res: Response) => {
   );
 
   sendResponse<IAcademicSemester>(res, {
-    statusCode: status.OK,
+    statusCode: httpStatus.OK,
     success: true,
     message: 'Academic semester created successfully',
     data: result,
@@ -32,7 +32,7 @@ const getAllSemester = catchAsync(async (req: Request, res: Response) => {
   );
 
   sendResponse<IAcademicSemester[]>(res, {
-    statusCode: status.OK,
+    statusCode: httpStatus.OK,
     success: true,
     message: 'Semester retrieved successfully.',
     meta: result.meta,
@@ -45,7 +45,7 @@ const getSingleSemester = catchAsync(async (req: Request, res: Response) => {
   const result = await AcademicSemesterService.getSingleSemester(id);
 
   sendResponse<IAcademicSemester>(res, {
-    statusCode: status.OK,
+    statusCode: httpStatus.OK,
     success: true,
     message: 'Semester retrieved successfully.',
     data: result,
@@ -59,7 +59,7 @@ const updateSemester = catchAsync(async (req: Request, res: Response) => {
   const result = await AcademicSemesterService.updateSemester(id, updatedData);
 
   sendResponse<IAcademicSemester>(res, {
-    statusCode: status.OK,
+    statusCode: httpStatus.OK,
     success: true,
     message: 'Semester updated successfully.',
     data: result,
@@ -72,7 +72,7 @@ const deleteSemester = catchAsync(async (req: Request, res: Response) => {
   const result = await AcademicSemesterService.deleteSemester(id);
 
   sendResponse<IAcademicSemester>(res, {
-    statusCode: status.OK,
+    statusCode: httpStatus.OK,
     success: true,
     message: 'Semester deleted successfully.',
     data: result,

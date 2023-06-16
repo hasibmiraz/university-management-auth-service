@@ -15,8 +15,8 @@ import { errorLogger } from '../../shared/logger';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   config.env === 'development'
-    ? console.log(`Global error handler , ${error}`)
-    : errorLogger.error(`Global error handler , ${error}`);
+    ? console.log(`Global error handler, ${error}`)
+    : errorLogger.error(`Global error handler, ${error}`);
 
   let statusCode = 500;
   let message = 'Something went wrong.';
