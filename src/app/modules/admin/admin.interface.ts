@@ -25,4 +25,16 @@ export type IAdmin = {
   managementDepartment?: Types.ObjectId;
 };
 
+export type IAdminFilters = {
+  searchTerm?: string;
+  id?: string;
+  email?: string;
+  contactNo?: string;
+  emergencyContactNo?: string;
+  gender?: IGender;
+  bloodGroup?: IBloodGroup;
+  managementDepartment?: string;
+  designation?: string;
+};
+
 export type AdminModel = Model<IAdmin, Record<string, unknown>>;

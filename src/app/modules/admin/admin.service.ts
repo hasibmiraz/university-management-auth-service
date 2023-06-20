@@ -1,10 +1,68 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
-import mongoose from 'mongoose';
+import mongoose, { SortOrder } from 'mongoose';
 import ApiError from '../../../errors/ApiErrors';
+import { PaginationHelper } from '../../../helper/paginationHelper';
+import { IGenericResponse } from '../../../interfaces/common';
+import { IPaginationOptions } from '../../../interfaces/pagination';
 import { User } from '../User/user.model';
-import { IAdmin } from './admin.interface';
+import { adminSearchableFields } from './admin.constant';
+import { IAdmin, IAdminFilters } from './admin.interface';
 import { Admin } from './admin.model';
+
+const getAllAdmins = async (
+  filters: IAdminFilters,
+  paginationOptions: IPaginationOptions
+): Promise<IGenericResponse<IAdmin[]>> => {
+  const { searchTerm, ...filtersData } = filters;
+  const { page, limit, skip, sortBy, sortOrder } =
+    PaginationHelper.calculatePagination(paginationOptions);
+  const andConditions = [];
+
+  if (searchTerm) {
+    andConditions.push({
+      $or: adminSearchableFields.map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filtersData).length) {
+    andConditions.push({
+      $and: Object.entries(filtersData).map(([field, value]) => ({
+        [field]: value,
+      })),
+    });
+  }
+
+  const sortConditions: { [key: string]: SortOrder } = {};
+
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+  const whereConditions =
+    andConditions.length > 0 ? { $and: andConditions } : {};
+
+  const result = await Admin.find(whereConditions)
+    // .populate('managementDepartment')
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+
+  const total = await Admin.countDocuments(whereConditions);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
 
 const getSingleAdmin = async (id: string): Promise<IAdmin> => {
   const result = await Admin.findOne({ id });
@@ -70,6 +128,7 @@ const deleteAdmin = async (id: string): Promise<IAdmin | null> => {
 };
 
 export const AdminService = {
+  getAllAdmins,
   getSingleAdmin,
   updateAdmin,
   deleteAdmin,
