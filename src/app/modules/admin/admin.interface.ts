@@ -22,7 +22,7 @@ export type IAdmin = {
   presentAddress: string;
   permanentAddress: string;
   bloodGroup: IBloodGroup;
-  managementDepartment?: Types.ObjectId;
+  managementDepartment: Types.ObjectId;
 };
 
 export type IAdminFilters = {
