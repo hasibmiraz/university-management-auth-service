@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
+import mongoose from 'mongoose';
 import ApiError from '../../../errors/ApiErrors';
+import { User } from '../User/user.model';
 import { IFaculty } from './faculty.interface';
 import { Faculty } from './faculty.model';
 
@@ -42,7 +44,36 @@ const updateFaculty = async (
   return result;
 };
 
+const deleteFaculty = async (id: string): Promise<IFaculty | null> => {
+  const result = await Faculty.findOne({ id });
+
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Faculty not found.');
+  }
+
+  const session = mongoose.startSession();
+
+  try {
+    (await session).startTransaction();
+
+    const faculty = await Faculty.findOneAndDelete({ id });
+
+    if (!faculty) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Faculty not found.');
+    }
+
+    await User.deleteOne({ id });
+    (await session).commitTransaction();
+    (await session).endSession();
+    return faculty;
+  } catch (error) {
+    (await session).abortTransaction();
+    throw error;
+  }
+};
+
 export const FacultyService = {
   getSingleFaculty,
   updateFaculty,
+  deleteFaculty,
 };
