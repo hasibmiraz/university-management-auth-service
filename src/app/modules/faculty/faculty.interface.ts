@@ -14,6 +14,7 @@ export type IFaculty = {
   name: IFacultyName;
   gender: IGender;
   dateOfBirth: string;
+  profileImage?: string;
   email: string;
   contactNo: string;
   emergencyContactNo: string;

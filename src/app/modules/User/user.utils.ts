@@ -23,3 +23,13 @@ export const generateFacultyId = async (): Promise<string> => {
   const newFacultyId = `F-${incrementedId}`;
   return newFacultyId;
 };
+
+export const generateAdminId = async (): Promise<string> => {
+  const currentId =
+    (await findLastUserId('admin', 2)) || (0).toString().padStart(5, '0');
+
+  const incrementedId = (parseInt(currentId) + 1).toString().padStart(5, '0');
+
+  const newAdminId = `A-${incrementedId}`;
+  return newAdminId;
+};
