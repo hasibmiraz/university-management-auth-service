@@ -1,8 +1,8 @@
-import { Schema, Types, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { bloodGroup, gender } from '../../../constants/user';
-import { FacultyModel, IFaculty } from './faculty.interface';
+import { AdminModel, IAdmin } from './admin.interface';
 
-const facultySchema = new Schema<IFaculty, FacultyModel>(
+const adminSchema = new Schema<IAdmin, AdminModel>(
   {
     id: {
       type: String,
@@ -22,26 +22,28 @@ const facultySchema = new Schema<IFaculty, FacultyModel>(
         required: true,
       },
     },
+    dateOfBirth: {
+      type: String,
+      required: true,
+    },
     gender: {
       type: String,
       enum: gender,
       required: true,
     },
-    dateOfBirth: {
+    bloodGroup: {
       type: String,
+      enum: bloodGroup,
       required: true,
     },
     email: {
       type: String,
-      required: true,
       unique: true,
-    },
-    profileImage: {
-      type: String,
-      // required: true,
+      required: true,
     },
     contactNo: {
       type: String,
+      unique: true,
       required: true,
     },
     emergencyContactNo: {
@@ -56,23 +58,17 @@ const facultySchema = new Schema<IFaculty, FacultyModel>(
       type: String,
       required: true,
     },
-    bloodGroup: {
-      type: String,
-      enum: bloodGroup,
+    managementDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'managementDepartment',
+      required: true,
     },
     designation: {
       type: String,
       required: true,
     },
-    academicDepartment: {
-      type: Types.ObjectId,
-      ref: 'AcademicDepartment',
-      required: true,
-    },
-    academicFaculty: {
-      type: Types.ObjectId,
-      ref: 'AcademicFaculty',
-      required: true,
+    profileImage: {
+      type: String,
     },
   },
   {
@@ -80,4 +76,4 @@ const facultySchema = new Schema<IFaculty, FacultyModel>(
   }
 );
 
-export const Faculty = model<IFaculty, FacultyModel>('Faculty', facultySchema);
+export const Admin = model<IAdmin, AdminModel>('Admin', adminSchema);
