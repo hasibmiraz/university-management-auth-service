@@ -5,6 +5,7 @@ import { AdminValidation } from './admin.validation';
 
 const router = Router();
 
+router.get('/', AdminController.getAllAdmins);
 router.get('/:id', AdminController.getSingleAdmin);
 router.patch(
   '/:id',
