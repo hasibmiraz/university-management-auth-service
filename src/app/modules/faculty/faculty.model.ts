@@ -1,5 +1,5 @@
 import { Schema, Types, model } from 'mongoose';
-import { facultyBloogGroup } from './faculty.constant';
+import { bloodGroup, gender } from '../../../constants/user';
 import { FacultyModel, IFaculty } from './faculty.interface';
 
 const facultySchema = new Schema<IFaculty>(
@@ -20,11 +20,11 @@ const facultySchema = new Schema<IFaculty>(
         type: String,
         required: true,
       },
-      required: true,
     },
     gender: {
       type: String,
-      enum: ['male', 'female'],
+      enum: gender,
+      required: true,
     },
     dateOfBirth: {
       type: String,
@@ -33,6 +33,7 @@ const facultySchema = new Schema<IFaculty>(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     contactNo: {
       type: String,
@@ -52,7 +53,7 @@ const facultySchema = new Schema<IFaculty>(
     },
     bloodGroup: {
       type: String,
-      enum: facultyBloogGroup,
+      enum: bloodGroup,
     },
     designation: {
       type: String,
