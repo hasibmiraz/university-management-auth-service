@@ -180,11 +180,9 @@ const createAdminZodSchema = z.object({
       permanentAddress: z.string({
         required_error: 'Permanent address is required',
       }),
-      managementDepartment: z
-        .string({
-          required_error: 'Management department is required',
-        })
-        .optional(),
+      managementDepartment: z.string({
+        required_error: 'Management department is required',
+      }),
       designation: z.string({
         required_error: 'Designation is required',
       }),

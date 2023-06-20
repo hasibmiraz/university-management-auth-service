@@ -47,7 +47,7 @@ const getAllAdmins = async (
     andConditions.length > 0 ? { $and: andConditions } : {};
 
   const result = await Admin.find(whereConditions)
-    // .populate('managementDepartment')
+    .populate('managementDepartment')
     .sort(sortConditions)
     .skip(skip)
     .limit(limit);
