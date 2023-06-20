@@ -1,6 +1,14 @@
 import httpStatus from 'http-status';
+import { SortOrder } from 'mongoose';
 import ApiError from '../../../errors/ApiErrors';
-import { IManagementDepartment } from './managementDepartment.interface';
+import { PaginationHelper } from '../../../helper/paginationHelper';
+import { IGenericResponse } from '../../../interfaces/common';
+import { IPaginationOptions } from '../../../interfaces/pagination';
+import { managementDepartmentSearchableFields } from './managementDepartment.constant';
+import {
+  IManagementDepartment,
+  IManagementDepartmentFilters,
+} from './managementDepartment.interface';
 import { ManagementDepartment } from './managementDepartment.model';
 
 const createDepartment = async (
@@ -8,6 +16,60 @@ const createDepartment = async (
 ): Promise<IManagementDepartment> => {
   const result = await ManagementDepartment.create(payload);
   return result;
+};
+
+const getAllDepartments = async (
+  filters: IManagementDepartmentFilters,
+  paginationOptions: IPaginationOptions
+): Promise<IGenericResponse<IManagementDepartment[]>> => {
+  const { searchTerm, ...filtersData } = filters;
+  const { page, limit, skip, sortBy, sortOrder } =
+    PaginationHelper.calculatePagination(paginationOptions);
+
+  const andConditions = [];
+
+  if (searchTerm) {
+    andConditions.push({
+      $or: managementDepartmentSearchableFields.map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filtersData).length) {
+    andConditions.push({
+      $and: Object.entries(filtersData).map(([field, value]) => ({
+        [field]: value,
+      })),
+    });
+  }
+
+  const sortConditions: { [key: string]: SortOrder } = {};
+
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+  const whereConditions =
+    andConditions.length > 0 ? { $and: andConditions } : {};
+
+  const result = await ManagementDepartment.find(whereConditions)
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+
+  const total = await ManagementDepartment.countDocuments(whereConditions);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
 
 const getSingleDepartment = async (
@@ -58,6 +120,7 @@ const deleteDepartment = async (
 
 export const ManagementDepartmentService = {
   createDepartment,
+  getAllDepartments,
   getSingleDepartment,
   updateDepartment,
   deleteDepartment,
