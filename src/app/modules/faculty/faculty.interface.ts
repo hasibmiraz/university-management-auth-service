@@ -1,4 +1,5 @@
 import { Model, Types } from 'mongoose';
+import { IBloodGroup, IGender } from '../../../interfaces/user';
 import { IAcademicDepartment } from '../academicDepartment/academicDepartment.interface';
 import { IAcademicFaculty } from '../academicFaculty/academicFaculty.interface';
 
@@ -8,27 +9,17 @@ type IFacultyName = {
   lastName: string;
 };
 
-export type IFacultyBloodGroup =
-  | 'A+'
-  | 'A-'
-  | 'B+'
-  | 'B-'
-  | 'AB+'
-  | 'AB-'
-  | 'O+'
-  | 'O-';
-
 export type IFaculty = {
   id: string;
   name: IFacultyName;
-  gender: 'male' | 'female';
+  gender: IGender;
   dateOfBirth: string;
   email: string;
   contactNo: string;
   emergencyContactNo: string;
   presentAddress: string;
   permanentAddress: string;
-  bloodGroup: IFacultyBloodGroup;
+  bloodGroup: IBloodGroup;
   designation: string;
   academicDepartment: Types.ObjectId | IAcademicDepartment;
   academicFaculty: Types.ObjectId | IAcademicFaculty;
