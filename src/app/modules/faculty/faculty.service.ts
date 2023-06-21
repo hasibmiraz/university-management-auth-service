@@ -115,7 +115,9 @@ const deleteFaculty = async (id: string): Promise<IFaculty | null> => {
   try {
     (await session).startTransaction();
 
-    const faculty = await Faculty.findOneAndDelete({ id });
+    const faculty = await Faculty.findOneAndDelete({ id })
+      .populate('academicDepartment')
+      .populate('academicFaculty');
 
     if (!faculty) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Faculty not found.');
