@@ -1,4 +1,6 @@
-import { Schema, model } from 'mongoose';
+import bcrypt from 'bcrypt';
+import { CallbackError, Schema, model } from 'mongoose';
+import config from '../../../config';
 import { IUser, UserModel } from './user.interface';
 
 const userSchema = new Schema<IUser>(
@@ -36,5 +38,25 @@ const userSchema = new Schema<IUser>(
     },
   }
 );
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(
+      this.password,
+      Number(config.bcrypt_salt_round)
+    );
+
+    // Replace the plain password with the hashed password
+    this.password = hashedPassword;
+
+    return next();
+  } catch (error) {
+    next(error as CallbackError);
+  }
+});
 
 export const User = model<IUser, UserModel>('User', userSchema);

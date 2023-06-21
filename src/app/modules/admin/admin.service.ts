@@ -111,7 +111,9 @@ const deleteAdmin = async (id: string): Promise<IAdmin | null> => {
   try {
     (await session).startTransaction();
 
-    const admin = await Admin.findOneAndDelete({ id });
+    const admin = await Admin.findOneAndDelete({ id }).populate(
+      'managementDepartment'
+    );
 
     if (!admin) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Admin not found.');

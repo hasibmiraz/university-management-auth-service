@@ -160,6 +160,7 @@ const createAdmin = async (
   if (!user.password) {
     user.password = config.default_admin_password as string;
   }
+
   // set role
   user.role = 'admin';
 
