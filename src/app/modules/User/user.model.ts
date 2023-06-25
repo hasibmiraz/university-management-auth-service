@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
 import { CallbackError, Schema, model } from 'mongoose';
 import config from '../../../config';
-import { IUser, IUserMethods, UserModel } from './user.interface';
+import { IUser, UserModel } from './user.interface';
 
-const userSchema = new Schema<IUser, Record<string, unknown>, IUserMethods>(
+const userSchema = new Schema<IUser, UserModel>(
   {
     id: {
       type: String,
@@ -22,6 +22,9 @@ const userSchema = new Schema<IUser, Record<string, unknown>, IUserMethods>(
     needsPasswordChange: {
       type: Boolean,
       default: true,
+    },
+    passwordChangedAt: {
+      type: Date,
     },
     student: {
       type: Schema.Types.ObjectId,
@@ -44,16 +47,19 @@ const userSchema = new Schema<IUser, Record<string, unknown>, IUserMethods>(
   }
 );
 
-userSchema.methods.isUserExist = async function (
+userSchema.statics.isUserExist = async function (
   id: string
-): Promise<Partial<IUser> | null> {
+): Promise<Pick<
+  IUser,
+  'id' | 'password' | 'role' | 'needsPasswordChange'
+> | null> {
   return await User.findOne(
     { id },
-    { id: 1, password: 1, needsPasswordChange: 1, role: 1 }
+    { id: 1, password: 1, role: 1, needsPasswordChange: 1 }
   ).lean();
 };
 
-userSchema.methods.isPasswordMatched = async function (
+userSchema.statics.isPasswordMatched = async function (
   givenPassword: string,
   savedPassword: string
 ): Promise<boolean> {
