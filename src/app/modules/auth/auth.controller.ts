@@ -6,7 +6,7 @@ import sendResponse from '../../../shared/sendResponse';
 import { ILoginUserResponse, IRefreshTokenResponse } from './auth.interface';
 import { AuthService } from './auth.service';
 
-export const loginUser: RequestHandler = catchAsync(
+const loginUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { ...loginData } = req.body;
     const result = await AuthService.loginUser(loginData);
@@ -28,7 +28,7 @@ export const loginUser: RequestHandler = catchAsync(
   }
 );
 
-export const refreshToken: RequestHandler = catchAsync(
+const refreshToken: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { refreshToken } = req.cookies;
     const result = await AuthService.refreshToken(refreshToken);
@@ -49,7 +49,22 @@ export const refreshToken: RequestHandler = catchAsync(
   }
 );
 
+const changePassword: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const user = req.user;
+    const { ...passwordData } = req.body;
+    await AuthService.changePassword(user, passwordData);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Password changed successfully.',
+    });
+  }
+);
+
 export const AuthController = {
   loginUser,
   refreshToken,
+  changePassword,
 };

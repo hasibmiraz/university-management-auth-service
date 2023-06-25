@@ -5,7 +5,7 @@ import sendResponse from '../../../shared/sendResponse';
 import { IUser } from './user.interface';
 import { UserService } from './user.service';
 
-export const createStudent: RequestHandler = catchAsync(
+const createStudent: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { student, ...user } = req.body;
     const result = await UserService.createStudent(student, user);
@@ -19,7 +19,7 @@ export const createStudent: RequestHandler = catchAsync(
   }
 );
 
-export const createFaculty: RequestHandler = catchAsync(
+const createFaculty: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { faculty, ...user } = req.body;
     const result = await UserService.createFaculty(faculty, user);
@@ -33,7 +33,7 @@ export const createFaculty: RequestHandler = catchAsync(
   }
 );
 
-export const createAdmin: RequestHandler = catchAsync(
+const createAdmin: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { admin, ...user } = req.body;
     const result = await UserService.createAdmin(admin, user);

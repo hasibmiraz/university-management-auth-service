@@ -1,10 +1,11 @@
 import httpStatus from 'http-status';
-import { Secret } from 'jsonwebtoken';
+import { JwtPayload, Secret } from 'jsonwebtoken';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiErrors';
 import { JwtHelpers } from '../../../helper/jwtHelpers';
 import { User } from '../User/user.model';
 import {
+  IChangePassword,
   ILoginUser,
   ILoginUserResponse,
   IRefreshTokenResponse,
@@ -12,8 +13,7 @@ import {
 
 const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
   const { id, password } = payload;
-  const user = new User();
-  const isUserExist = await user.isUserExist(id);
+  const isUserExist = await User.isUserExist(id);
 
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
@@ -21,7 +21,7 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
 
   const isMatched =
     isUserExist?.password &&
-    (await user.isPasswordMatched(password, isUserExist?.password));
+    (await User.isPasswordMatched(password, isUserExist?.password));
 
   if (!isMatched) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password did not match.');
@@ -68,8 +68,7 @@ const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
   const { id } = verifiedToken;
 
   // check if user is available or not
-  const user = new User();
-  const isUserExist = await user.isUserExist(id);
+  const isUserExist = await User.isUserExist(id);
 
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
@@ -85,7 +84,31 @@ const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
   return { accessToken: newAccessToken };
 };
 
+const changePassword = async (
+  user: JwtPayload,
+  payload: IChangePassword
+): Promise<void> => {
+  const { oldPassword, newPassword } = payload;
+  const isUserExist = await User.findOne({ id: user.id }).select('+password');
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found.');
+  }
+
+  const isPasswordMatched = await User.isPasswordMatched(
+    oldPassword,
+    isUserExist.password as string
+  );
+
+  if (!isPasswordMatched) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Old password incorrect.');
+  }
+  isUserExist.needsPasswordChange = false;
+  isUserExist.password = newPassword;
+  isUserExist.save();
+};
+
 export const AuthService = {
   loginUser,
   refreshToken,
+  changePassword,
 };
