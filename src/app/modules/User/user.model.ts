@@ -68,12 +68,14 @@ userSchema.statics.isPasswordMatched = async function (
 
 userSchema.pre('save', async function (next) {
   try {
-    const hashedPassword = await bcrypt.hash(
+    this.password = await bcrypt.hash(
       this.password,
       Number(config.bcrypt_salt_round)
     );
 
-    this.password = hashedPassword;
+    if (!this.needsPasswordChange) {
+      this.passwordChangedAt = new Date();
+    }
 
     next();
   } catch (error) {
